@@ -74,7 +74,7 @@ function s:fzf_hub_output(channel, message)
 endfunction
 
 function s:fzf_hub_has_finished(job, exit)
-  if len(s:fzf_hub_lines) > 0
+  if len(s:fzf_hub_lines) = 0
     call fzf#run({
           \ 'sink' : function('s:do_pr_checkout'),
           \ 'source' : s:fzf_hub_lines,
