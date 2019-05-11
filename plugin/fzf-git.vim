@@ -97,5 +97,5 @@ function s:fzf_checkout_pr()
         \ })
 endfunction
 
-command! FzfGitCheckout call s:fzf_checkout_branch()
-command! FzfPrCheckout call s:fzf_checkout_pr()
+command! GitCheckoutBranch call s:fzf_checkout_branch()
+command! GitCheckoutPr call s:fzf_checkout_pr()
