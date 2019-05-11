@@ -74,11 +74,15 @@ function s:fzf_hub_output(channel, message)
 endfunction
 
 function s:fzf_hub_has_finished(job, exit)
-  call fzf#run({
-        \ 'sink' : function('s:do_pr_checkout'),
-        \ 'source' : s:fzf_hub_lines,
-        \ 'down' : '40%'
-        \ })
+  if len(s:fzf_hub_lines) > 0
+    call fzf#run({
+          \ 'sink' : function('s:do_pr_checkout'),
+          \ 'source' : s:fzf_hub_lines,
+          \ 'down' : '40%'
+          \ })
+  else
+    echom('No prs found for repository')
+  endif
 endfunction
 
 function s:fzf_checkout_pr()
