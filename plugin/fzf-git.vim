@@ -2,10 +2,6 @@ function s:get_remotes()
   return ['origin']
 endfunction
 
-if !exists('g:fugitive_git_command') && executable('hub')
-  let g:fugitive_git_command = 'hub'
-endif
-
 function s:parse_branch_line(key, line)
   let l:parts = matchlist(a:line, '\(\S\+\)\s\+\(\S\+\)\s\+\(.\+\)')
   let l:branch = {
