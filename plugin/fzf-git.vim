@@ -43,7 +43,7 @@ endfunction
 
 function s:do_branch_checkout(line)
   let l:branch = s:parse_branch_line(0, a:line)
-  execute 'Git checkout' . l:branch.name
+  execute 'Git checkout ' . l:branch.name
 endfunction
 
 function Job_out_handler(channel, message)
