@@ -20,6 +20,27 @@ function s:parse_branch_line(key, line)
   return l:branch
 endfunction
 
+function! GetLineBlameHash()
+  let l:blame_cmd = 'git blame ' . expand('%') . ' -L ' . line('.') . ',' .  line('.')
+  let l:hash_cmd = l:blame_cmd . " | awk '{print $1}'"
+  let l:response = system(l:hash_cmd)
+  echom(l:response)
+endfunction
+
+function! OpenLinePr()
+  let l:blame_cmd = 'git blame ' . expand('%') . ' -L ' . line('.') . ',' .  line('.')
+  let l:hash_cmd = l:blame_cmd . " | awk '{print $1}'"
+  let l:response = system(l:hash_cmd)
+  if v:shell_error == 0
+    let l:repo_url = system('hub browse -u | cut -d/ -f1-5 | tr -d "\n"')
+    let l:pr_search_url = l:repo_url . "/pulls\\?q=" . l:response
+    let l:command = 'silent !open ' . l:pr_search_url . " | :redraw!"
+    execute l:command
+  else
+    echoerr l:response
+  endif
+endfunction
+
 function s:do_branch_checkout(line)
   let l:branch = s:parse_branch_line(0, a:line)
   execute 'Git checkout' . l:branch.name
@@ -52,11 +73,14 @@ endfunction
 
 function s:fzf_checkout_branch()
   let l:branch_lines = s:get_branch_lines()
-  call fzf#run({
-        \ 'sink': function('s:do_branch_checkout'),
-        \ 'source': l:branch_lines,
-        \ 'down': '40%'
-        \ })
+
+  let l:opts = {
+    \ 'sink': function('s:do_branch_checkout'),
+    \ 'source': l:branch_lines,
+    \ 'down': '40%'
+    \ }
+
+  call fzf#run(fzf#wrap(l:opts))
 endfunction
 
 function s:do_pr_checkout(line)
@@ -70,12 +94,15 @@ function s:fzf_hub_output(channel, message)
 endfunction
 
 function s:fzf_hub_has_finished(job, exit)
-  if len(s:fzf_hub_lines) = 0
-    call fzf#run({
-          \ 'sink' : function('s:do_pr_checkout'),
-          \ 'source' : s:fzf_hub_lines,
-          \ 'down' : '40%'
-          \ })
+  if len(s:fzf_hub_lines) == 0
+
+    let l:opts = {
+      \ 'sink' : function('s:do_pr_checkout'),
+      \ 'source' : s:fzf_hub_lines,
+      \ 'down' : '40%'
+      \ }
+
+    call fzf#run(fzf#wrap(l:opts))
   else
     echom('No prs found for repository')
   endif
