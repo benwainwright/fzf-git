@@ -94,7 +94,7 @@ function s:fzf_hub_output(channel, message)
 endfunction
 
 function s:fzf_hub_has_finished(job, exit)
-  if len(s:fzf_hub_lines) == 0
+  if len(s:fzf_hub_lines) != 0
 
     let l:opts = {
       \ 'sink' : function('s:do_pr_checkout'),
